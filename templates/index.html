@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>AI Chatbot</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+
+<div class="app-container">
+
+    <!-- SIDEBAR -->
+    <div class="sidebar">
+        <div class="sidebar-header">
+            AI Chat
+        </div>
+
+        <form action="/new_chat" method="POST">
+            <button type="submit" class="clear-btn">
+                + New Chat
+            </button>
+        </form>
+
+        <form action="/clear" method="POST">
+            <input type="hidden" name="conversation_id" value="{{ current_conversation }}">
+            <button type="submit" class="clear-btn danger">
+                Clear Chat
+            </button>
+        </form>
+
+        <div class="conversation-list">
+
+        {% for convo in conversations %}
+
+            <a href="/?conversation_id={{ convo.id }}">
+                <div class="conversation-item">
+                    {{ convo.title }}
+                </div>
+            </a>
+
+        {% endfor %}
+
+        </div>
+    </div>
+
+
+    <!-- MAIN CHAT -->
+    <div class="main-chat">
+
+        <div class="chat-header">
+            TinyLlama Assistant
+        </div>
+
+        <div class="chat-box" id="chat-box">
+
+            {% for chat in chats %}
+
+                <div class="message user typing">
+                    {{ chat['user_message'] }}
+                </div>
+
+                <div class="message bot typing">
+                    {{ chat['bot_response'] }}
+                </div>
+
+            {% endfor %}
+
+        </div>
+
+        <form method="POST" class="input-form">
+
+            <input type="hidden" 
+                name="conversation_id" 
+                value="{{ current_conversation }}">
+
+            <input
+                type="text"
+                name="message"
+                placeholder="Send a message..."
+                required
+            >
+
+            <button type="submit">Send</button>
+
+        </form>
+
+    </div>
+
+</div>
+
+<script>
+
+
+function newChat() {
+    fetch("/new_chat", { method: "POST" })
+    .then(response => response.text())
+    .then(() => {
+        window.location.href = "/";
+    });
+}
+
+
+</script>
+
+</body>
+</html>
